@@ -4,6 +4,7 @@ import configparser
 from tqdm import tqdm
 import pandas as pd
 import re
+import duckdb
 import os
 
 # Import Reddit App data from config file
@@ -117,7 +118,7 @@ def clean_df(df, moderators):
     return df.reset_index(drop=True)
 
 
-# Save the dataframe to the CSV file
+# Save DataFrame to the CSV file
 def save_data(df, subreddit_name, submission_filter, time_filter):
     current_date = datetime.now().strftime("%Y_%m_%d")
 
@@ -131,3 +132,38 @@ def save_data(df, subreddit_name, submission_filter, time_filter):
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
     df.to_csv(file_path, index=False)
+
+
+# Save DataFrame to DuckDB
+def save_data_to_duckdb(df, subreddit_name, submission_filter, time_filter):
+    # Define the DuckDB file path
+    db_file_path = "parsed_data.db"
+
+    # Connect to the DuckDB database
+    conn = duckdb.connect(db_file_path)
+
+    # Create a table name based on the subreddit and filter to ensure uniqueness
+    if submission_filter == "top":
+        table_name = f"{subreddit_name}_{submission_filter}_{time_filter}"
+    else:
+        table_name = f"{subreddit_name}_{submission_filter}"
+
+    # Check if the table exists in the database
+    table_exists = conn.execute(
+        f"SELECT COUNT(*) FROM information_schema.tables WHERE table_name = '{table_name}'"
+    ).fetchone()[0]
+
+    if table_exists == 0:
+        # Table does not exist, create it and insert the data
+        conn.execute(
+            f"CREATE TABLE {table_name} AS SELECT * FROM df"
+        )  # Creates an empty table with the same structure
+        conn.sql(f"INSERT INTO {table_name} SELECT * FROM df")
+        print(f"Table {table_name} created and data inserted.")
+    else:
+        # Table exists, append the data
+        conn.sql(f"INSERT INTO {table_name} SELECT * FROM df")
+        print(f"Data appended to existing table {table_name}.")
+
+    # Close the connection
+    conn.close()

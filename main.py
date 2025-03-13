@@ -1,5 +1,5 @@
 import pandas as pd
-from functions import load_data, clean_df, save_data
+from functions import load_data, clean_df, save_data, save_data_to_duckdb
 
 
 # Choose subreddit name, name of submission filtering, number of submissions to load
@@ -42,3 +42,6 @@ for submission_filter in submission_filters:
 
     # Save DataFrame to csv file
     save_data(df, subreddit_name, submission_filter, time_filter)
+
+    # Save DataFrame to DuckDB
+    # save_data_to_duckdb(df, subreddit_name, submission_filter, time_filter)
