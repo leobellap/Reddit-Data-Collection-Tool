@@ -67,13 +67,19 @@ The main script relies on the following functions:
 The cleaned data will be saved as a CSV file in the format:
 
 ```
-<subreddit_name>_<submission_filter>_<time_filter>.csv
+{subreddit_name}_{submission_filter}_{time_filter}_{current_date}.csv
+```
+
+or
+
+```
+{subreddit_name}_{submission_filter}_{current_date}.csv
 ```
 
 For example:
 
 ```
-learnpython_top_all.csv
+learnpython_top_all_2025_03_14.csv
 ```
 
 ## Optional: Save Data to DuckDB
@@ -91,4 +97,3 @@ If you would like to contribute to this project, feel free to fork the repositor
 ## License
 
 This project is licensed under the MIT License.
-```
