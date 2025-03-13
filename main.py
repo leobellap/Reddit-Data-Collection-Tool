@@ -6,7 +6,7 @@ from functions import load_data, clean_df, save_data, save_data_to_duckdb
 subreddit_name = ""
 submission_filters = [""]  # 'top', 'hot'
 submission_limit = 75
-time_filter = ""  # 'all', 'day', 'hour'
+time_filter = ""  # 'all', 'day', 'hour', only for 'top' submission type filter
 
 for submission_filter in submission_filters:
     # Parse data
