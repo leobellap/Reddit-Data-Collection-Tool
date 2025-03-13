@@ -9,6 +9,7 @@ submission_limit = 75
 time_filter = ""  # 'all', 'day', 'hour'
 
 for submission_filter in submission_filters:
+    # Parse data
     comments, moderators = load_data(
         subreddit_name=subreddit_name,
         submission_filter=submission_filter,
@@ -16,7 +17,7 @@ for submission_filter in submission_filters:
         time_filter=time_filter,
     )
 
-    # Create DataFrame
+    # Create DataFrame to store parsed data
     df = pd.DataFrame(
         comments,
         columns=[
@@ -36,7 +37,7 @@ for submission_filter in submission_filters:
         ],
     )
 
-    # Clean DataFrame
+    # Clean data in DataFrame
     df = clean_df(df, moderators)
 
     # Save DataFrame to csv file

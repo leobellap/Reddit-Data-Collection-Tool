@@ -6,9 +6,11 @@ import pandas as pd
 import re
 import os
 
+# Import Reddit App data from config file
 config = configparser.ConfigParser()
 config.read("config.ini")
 
+# Initialize PRAW
 reddit = praw.Reddit(
     client_id=config.get("reddit", "client_id"),
     client_secret=config.get("reddit", "client_secret"),
@@ -19,29 +21,30 @@ reddit = praw.Reddit(
 )
 
 
+# Function to parse data
 def load_data(subreddit_name, submission_filter, submission_limit, time_filter):
     comments = []
 
     subreddit = reddit.subreddit(subreddit_name)
     subreddit_name = subreddit.display_name
 
+    # Get moderator's names to filter their responses and submissions
     moderators = []
     for moderator in subreddit.moderator():
         moderators.append(moderator.name)
 
     if submission_filter == "hot":
-        # Получаем список самых обсуждаемых тем за день
         hot_submissions = subreddit.hot(limit=submission_limit)
 
-        # Проходим по всем обсуждаемым темам
         for submission in tqdm(hot_submissions):
-            # # Проверяем, что тема была создана за последние 24 часа
+            # # Choose a timeframe if you need
             # if submission.created_utc > time.time() - 24 * 60 * 60:
 
-            # Загружаем только те комментарии, которые алгоритмы Reddit считают самыми важными
+            # Parse only the most important comments to reduce the number of requests
             submission.comments.replace_more(limit=0)
 
             for comment in submission.comments.list():
+                # Choose data you want to extract from comments and submissions
                 comment_info = [
                     submission.created_utc,
                     submission.score,
@@ -60,12 +63,9 @@ def load_data(subreddit_name, submission_filter, submission_limit, time_filter):
                 comments.append(comment_info)
 
     elif submission_filter == "top":
-        # Получаем список самых обсуждаемых тем за выбранный промежуток времени
         top_submissions = subreddit.top(time_filter=time_filter, limit=submission_limit)
 
-        # Проходим по всем обсуждаемым темам
         for submission in tqdm(top_submissions):
-            # Загружаем только те комментарии, которые алгоритмы Reddit считают самыми важными
             submission.comments.replace_more(limit=0)
 
             for comment in submission.comments.list():
@@ -89,15 +89,18 @@ def load_data(subreddit_name, submission_filter, submission_limit, time_filter):
     return comments, moderators
 
 
-def regex_preprocessing(text):
-    # Функции для очистки
+# Function for in-comment cleaning
+def preprocess_data(text):
+    # Add data preprocessing logic here
 
-    # Замена лишних пробелов на один пробел
+    # Delete unnecessary whitespaces
     text = re.sub(r"\s+", " ", text)
 
+    # Remove any leading and trailing whitespaces
     return text.strip()
 
 
+# Process DataFrame with parsed data
 def clean_df(df, moderators):
     df["submission_date"] = pd.to_datetime(df.submission_date, unit="s")
     df["comment_date"] = pd.to_datetime(df.comment_date, unit="s")
@@ -107,15 +110,15 @@ def clean_df(df, moderators):
     df = df.loc[~df["submission_author"].astype("string").isin(moderators)]
     df = df.loc[~df["comment_author"].astype("string").isin(moderators)]
 
-    df["comment_text"] = df["comment_text"].apply(regex_preprocessing)
-    df["submission_selftext"] = df["submission_selftext"].apply(regex_preprocessing)
-    df["submission_title"] = df["submission_title"].apply(regex_preprocessing)
+    df["comment_text"] = df["comment_text"].apply(preprocess_data)
+    df["submission_selftext"] = df["submission_selftext"].apply(preprocess_data)
+    df["submission_title"] = df["submission_title"].apply(preprocess_data)
 
     return df.reset_index(drop=True)
 
 
+# Save the dataframe to the CSV file
 def save_data(df, subreddit_name, submission_filter, time_filter):
-    # Сохраним данные в csv
     current_date = datetime.now().strftime("%Y_%m_%d")
 
     # Define the path where the file will be saved
@@ -127,5 +130,4 @@ def save_data(df, subreddit_name, submission_filter, time_filter):
     # Ensure the directory exists
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
-    # Save the dataframe to the CSV file
     df.to_csv(file_path, index=False)
