@@ -3,6 +3,7 @@
 
 # configs
 config.ini
+.pdm-python
 
 # cache folders
 __pycache__

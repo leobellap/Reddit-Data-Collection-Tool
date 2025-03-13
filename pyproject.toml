@@ -1,14 +1,19 @@
 [project]
-name = "reddit_parser"
+name = "Reddit-Data-Collection-Tool"
 version = "0.1.0"
-description = "Default template for PDM package"
-authors = [
-    {name = "leobellap", email = "leobellap@gmail.com"},
+description = "This project collects and processes data from a specified Reddit subreddit. The data is filtered based on submission filters, such as 'top' or 'hot', and the number of submissions can be limited. The collected data is then cleaned and saved into a CSV file (and optionally into a DuckDB database)."
+authors = [{ name = "leobellap", email = "leobellap@gmail.com" }]
+dependencies = [
+    "ruff>=0.10.0",
+    "pandas>=2.2.3",
+    "praw>=7.8.1",
+    "ipykernel>=6.29.5",
+    "tqdm>=4.67.1",
+    "duckdb>=1.2.1",
 ]
-dependencies = ["ruff>=0.10.0", "pandas>=2.2.3", "praw>=7.8.1", "ipykernel>=6.29.5", "tqdm>=4.67.1", "duckdb>=1.2.1"]
 requires-python = "==3.12.*"
 readme = "README.md"
-license = {text = "MIT"}
+license = { text = "MIT" }
 
 
 [tool.pdm]
