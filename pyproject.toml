@@ -1,0 +1,15 @@
+[project]
+name = "reddit_parser"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "leobellap", email = "leobellap@gmail.com"},
+]
+dependencies = ["ruff>=0.10.0", "pandas>=2.2.3", "praw>=7.8.1", "ipykernel>=6.29.5", "tqdm>=4.67.1"]
+requires-python = "==3.12.*"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[tool.pdm]
+distribution = false

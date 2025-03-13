@@ -1,0 +1,21 @@
+# envs
+.venv/
+
+# configs
+config.ini
+
+# cache folders
+__pycache__
+
+# duckdb temp files
+*.wal
+
+# csvs
+csvs/
+
+# dbs
+*.db
+*.duckdb
+
+# ipynbs
+*.ipynb
