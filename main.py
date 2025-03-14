@@ -4,7 +4,7 @@ from functions import load_data, clean_df, save_data, save_data_to_duckdb
 
 # Choose subreddit name, name of submission filtering, number of submissions to load
 subreddit_name = ""
-submission_filters = [""]  # 'top', 'hot'
+submission_filters = [""]  # 'top', 'hot' or both
 submission_limit = 75
 time_filter = ""  # 'all', 'day', 'hour', only for 'top' submission type filter
 
