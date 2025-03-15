@@ -124,9 +124,9 @@ def save_data(df, subreddit_name, submission_filter, time_filter):
 
     # Define the path where the file will be saved
     if submission_filter == "top":
-        file_path = f"csvs/{submission_filter}/{subreddit_name}_{submission_filter}_{time_filter}_{current_date}.csv"
+        file_path = f"csvs/{submission_filter}/{subreddit_name}/{subreddit_name}_{submission_filter}_{time_filter}_{current_date}.csv"
     else:
-        file_path = f"csvs/{submission_filter}/{subreddit_name}_{submission_filter}_{current_date}.csv"
+        file_path = f"csvs/{submission_filter}/{subreddit_name}/{subreddit_name}_{submission_filter}_{current_date}.csv"
 
     # Ensure the directory exists
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
@@ -167,3 +167,44 @@ def save_data_to_duckdb(df, subreddit_name, submission_filter, time_filter):
 
     # Close the connection
     conn.close()
+
+
+# Start the pipeline
+def extract_data(subreddit_name, submission_filters, submission_limit, time_filter):
+    for submission_filter in submission_filters:
+        # Parse data
+        comments, moderators = load_data(
+            subreddit_name=subreddit_name,
+            submission_filter=submission_filter,
+            submission_limit=submission_limit,
+            time_filter=time_filter,
+        )
+
+        # Create DataFrame to store parsed data
+        df = pd.DataFrame(
+            comments,
+            columns=[
+                "submission_date",
+                "submission_score",
+                "submission_upvote_ratio",
+                "submission_title",
+                "submission_selftext",
+                "submission_author",
+                "comment_date",
+                "comment_score",
+                "comment_author",
+                "comment_text",
+                "comment_is_submitter",
+                "submission_permalink",
+                "submission_url",
+            ],
+        )
+
+        # Clean data in DataFrame
+        df = clean_df(df, moderators)
+
+        # Save DataFrame to csv file
+        save_data(df, subreddit_name, submission_filter, time_filter)
+
+        # Save DataFrame to DuckDB
+        # save_data_to_duckdb(df, subreddit_name, submission_filter, time_filter)

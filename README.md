@@ -61,6 +61,7 @@ The main script relies on the following functions:
 - `clean_df`: Cleans the DataFrame.
 - `save_data`: Saves the cleaned DataFrame to a CSV file.
 - `save_data_to_duckdb`: Optionally saves the DataFrame to a DuckDB database for further analysis.
+- `extract_data`: Combines functions above in to a one pipeline.
 
 ## Example Output
 
@@ -84,7 +85,7 @@ learnpython_top_all_2025_03_14.csv
 
 ## Optional: Save Data to DuckDB
 
-Uncomment the following line in `main.py` to save data to a DuckDB database:
+Uncomment the following line in function `extract_data()` of `functions.py` to save data to a DuckDB database:
 
 ```python
 # save_data_to_duckdb(df, subreddit_name, submission_filter, time_filter)
