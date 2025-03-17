@@ -20,3 +20,6 @@ csvs/
 
 # ipynbs
 *.ipynb
+
+# Except inspect_data.ipynb
+!inspect_data.ipynb
